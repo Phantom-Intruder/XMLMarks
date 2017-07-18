@@ -1,0 +1,6 @@
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\bin\Debug\XMLMarks_2.exe.config
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\bin\Debug\XMLMarks_2.exe
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\bin\Debug\XMLMarks_2.pdb
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\obj\Debug\XMLMarks_2.exe
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\obj\Debug\XMLMarks_2.pdb
+c:\users\mewantha.bandara\documents\visual studio 2015\Projects\XMLMarks_2\XMLMarks_2\obj\Debug\XMLMarks_2.csprojResolveAssemblyReference.cache
