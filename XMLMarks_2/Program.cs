@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -19,85 +16,134 @@ namespace XMLMarks
         static void Main(string[] args)
         {
             print("How many student records do you want to add");
-            //TODO: Add exceptions            
-            int numberOfTimes = Convert.ToInt32(Console.ReadLine());
+            //TODO: Add exceptions       
+            int numberOfStudents = 0;
+            numberOfStudents = getNumberOfStudents(numberOfStudents);
 
             int i = 0;
-            string dataInTag;
-            string tag;
+
             string[] listOfTags = { "FirstName", "LastName", "Mathematics", "Chemistry", "Physics", "English", "GeneralKnowledge" };
 
             if (File.Exists("student.xml") == false)
             {
-                XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-                xmlWriterSettings.Indent = true;
-                xmlWriterSettings.NewLineOnAttributes = true;
+                XmlWriterSettings xmlWriterSettings = readyXmlFileForWritingAndReading();
                 using (XmlWriter xmlWriter = XmlWriter.Create("student.xml", xmlWriterSettings))
                 {
-                    xmlWriter.WriteStartDocument();
-                    xmlWriter.WriteStartElement("StudentList");
-                    while (i != numberOfTimes)
-                    {
-                        xmlWriter.WriteStartElement("Student");
-                        for (int j = 0; j <= 6; j++)
-                        {
-                            string TagData = Console.ReadLine();
-                            elementWriterMethod(xmlWriter, TagData, listOfTags[j]);
-
-                        }
-                        xmlWriter.WriteEndElement();
-
-                        i++;
-                    }
-                    xmlWriter.WriteEndElement();
-                    xmlWriter.WriteEndDocument();
-                    xmlWriter.Flush();
-                    xmlWriter.Close();
+                    i = openFileAndListTheTagsAndData(numberOfStudents, i, listOfTags, xmlWriter);
                 }
             }
             else
             {
-                XDocument xDocument = XDocument.Load("student.xml");
-                XElement root = xDocument.Element("StudentList");
-                IEnumerable<XElement> rows = root.Descendants("Student");
-                XElement firstRow = rows.First();
-                while (i != numberOfTimes)
+                XDocument xDocument;
+                XElement firstRow;
+                readyFileForAppending(out xDocument, out firstRow);
+                while (i != numberOfStudents)
                 {
-                    string[] tagDataArray = new string[7];
-                    for (int j = 0; j <= 6; j++)
-                    {
-                        tagDataArray[j] = Console.ReadLine();
-                    }
-
-                    firstRow.AddBeforeSelf(
-               new XElement("Student",
-               new XElement(listOfTags[0], tagDataArray[0]),
-               new XElement(listOfTags[1], tagDataArray[1]),
-               new XElement(listOfTags[2], tagDataArray[2]),
-               new XElement(listOfTags[3], tagDataArray[3]),
-               new XElement(listOfTags[4], tagDataArray[4]),
-               new XElement(listOfTags[5], tagDataArray[5]),
-               new XElement(listOfTags[6], tagDataArray[6])
-               ));
-                    xDocument.Save("student.xml");
+                    appendDataAndSaveDocument(listOfTags, xDocument, firstRow);
 
                     i++;
 
                 }
-             
+
             }
 
             writeDataToConsole(listOfTags);
 
         }
-        public static IEnumerable<T> Add<T>(this IEnumerable<T> e, T value)
+
+        private static int getNumberOfStudents(int numberOfStudents)
         {
-            foreach (var cur in e)
+            try
             {
-                yield return cur;
+                numberOfStudents = Convert.ToInt32(Console.ReadLine());
             }
-            yield return value;
+            catch (FormatException e)
+            {
+                print("Please enter a number");
+                getNumberOfStudents(numberOfStudents);
+            }
+
+            return numberOfStudents;
         }
+
+        private static void appendDataAndSaveDocument(string[] listOfTags, XDocument xDocument, XElement firstRow)
+        {
+            string[] tagDataArray = new string[7];
+            for (int j = 0; j <= 6; j++)
+            {
+                getInputFromUser(tagDataArray, j, listOfTags);
+            }
+
+            firstRow.AddBeforeSelf(
+       new XElement("Student",
+       new XElement(listOfTags[0], tagDataArray[0]),
+       new XElement(listOfTags[1], tagDataArray[1]),
+       new XElement(listOfTags[2], tagDataArray[2]),
+       new XElement(listOfTags[3], tagDataArray[3]),
+       new XElement(listOfTags[4], tagDataArray[4]),
+       new XElement(listOfTags[5], tagDataArray[5]),
+       new XElement(listOfTags[6], tagDataArray[6])
+       ));
+            xDocument.Save("student.xml");
+        }
+
+        private static void getInputFromUser(string[] tagDataArray, int j, string[] listOfTags)
+        {
+            try {
+                print("Enter "+ listOfTags[j]);
+                tagDataArray[j] = Console.ReadLine();
+            }catch (FormatException e)
+            {
+                print("Please enter only allowed characters");
+            }
+            }
+
+        private static void readyFileForAppending(out XDocument xDocument, out XElement firstRow)
+        {
+            xDocument = XDocument.Load("student.xml");
+            XElement root = xDocument.Element("StudentList");
+            IEnumerable<XElement> rows = root.Descendants("Student");
+            firstRow = rows.First();
+        }
+
+        private static XmlWriterSettings readyXmlFileForWritingAndReading()
+        {
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+            xmlWriterSettings.Indent = true;
+            xmlWriterSettings.NewLineOnAttributes = true;
+            return xmlWriterSettings;
+        }
+
+        private static int openFileAndListTheTagsAndData(int numberOfTimes, int i, string[] listOfTags, XmlWriter xmlWriter)
+        {
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("StudentList");
+            while (i != numberOfTimes)
+            {
+                matchTagsWithTagData(listOfTags, xmlWriter);
+
+                i++;
+            }
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Flush();
+            xmlWriter.Close();
+            return i;
+        }
+
+        private static void matchTagsWithTagData(string[] listOfTags, XmlWriter xmlWriter)
+        {
+            xmlWriter.WriteStartElement("Student");
+            for (int j = 0; j <= 6; j++)
+            {
+                string TagData = Console.ReadLine();
+                elementWriterMethod(xmlWriter, TagData, listOfTags[j]);
+
+            }
+            xmlWriter.WriteEndElement();
+        }
+
+
         private static void writeDataToConsole(string[] headers)
         {
             print("Student Information");
@@ -107,13 +153,13 @@ namespace XMLMarks
             print("---------------------------------------------------------------------------------------------------------------");
             // XDocument doc = XDocument.Load("student.xml");
             XmlReader xmlReader = XmlReader.Create("student.xml");
-          
+
             while (xmlReader.Read())
             {
 
                 if (xmlReader.NodeType.Equals(XmlNodeType.Text))
                 {
-                    Console.Write(String.Format("|{0,13}",xmlReader.Value));
+                    Console.Write(String.Format("|{0,13}", xmlReader.Value));
 
                 }
 
@@ -126,32 +172,6 @@ namespace XMLMarks
 
             }
             Console.ReadKey();
-        }
-
-
-        public static void Print2DArray(string[][] matrix)
-        {
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                {
-                    Console.Write(matrix[i][j] + "\t");
-                }
-                Console.WriteLine();
-            }
-        }
-        private static string[] loadDataToArray(IEnumerable<XElement> firstNameInFile)
-        {
-            int i = 0;
-
-            string[] firstNameArray = new string[10];
-
-            foreach (var fName in firstNameInFile)
-            {
-                firstNameArray[i] = (fName.Value);
-                i++;
-            }
-            return firstNameArray;
         }
 
         private static void elementWriterMethod(XmlWriter xmlWriter, string dataInTag, string tag)
