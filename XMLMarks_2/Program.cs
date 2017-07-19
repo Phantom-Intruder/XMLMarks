@@ -91,10 +91,20 @@ namespace XMLMarks
         {
             try {
                 print("Enter "+ listOfTags[j]);
-                tagDataArray[j] = Console.ReadLine();
-            }catch (FormatException e)
+                if (j <= 1)
+                {
+                    tagDataArray[j] = Console.ReadLine();
+                }
+                else
+                {
+                    int data = Convert.ToInt32(Console.ReadLine());
+                }
+            }
+            catch (FormatException e)
             {
-                print("Please enter only allowed characters");
+                print("Please enter only numbers for marks");
+                j = 0;
+                getInputFromUser(tagDataArray, j, listOfTags);
             }
             }
 
