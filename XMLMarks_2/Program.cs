@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using XMLMarks_2;
 
 namespace XMLMarks
 {
@@ -98,6 +99,11 @@ namespace XMLMarks
                 else
                 {
                     int data = Convert.ToInt32(Console.ReadLine());
+                    if ((data < 0)||(data > 100))
+                    {
+                        throw new MarksOutOfRangeException();
+                    }
+                    tagDataArray[j] = data.ToString();
                 }
             }
             catch (FormatException e)
@@ -105,8 +111,13 @@ namespace XMLMarks
                 print("Please enter only numbers for marks");
                 j = 0;
                 getInputFromUser(tagDataArray, j, listOfTags);
+            }catch (MarksOutOfRangeException m)
+            {
+                print("Please enter marks only within 0 - 100");
+                getInputFromUser(tagDataArray, j, listOfTags);
             }
-            }
+
+        }
 
         private static void readyFileForAppending(out XDocument xDocument, out XElement firstRow)
         {
